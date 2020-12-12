@@ -3,3 +3,6 @@ bower_components
 /coverage
 /test/lib
 /.nyc_output
+/esm
+/cjs
+/umd

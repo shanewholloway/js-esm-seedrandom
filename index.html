@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>esm-seedrandom</title>
+
+  <link rel='icon' href='data:image/png;base64,' />
+  <link rel='stylesheet' crossorigin='anonymous' href='https://cdn.jsdelivr.net/npm/purecss@1.0.1/build/pure-min.css' />
+
+  <style>
+    body {
+      max-width: 80ch;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    script.demo {
+      display: block;
+      white-space: pre;
+      font-family: monospace;
+    }
+  </style>
+</head>
+
+<body>
+<script class='demo' type="module">
+  import {
+    prng_alea,
+    prng_xor128,
+    prng_tychei,
+    prng_xorwow,
+    prng_xor4096,
+    prng_xorshift7,
+    prng_arc4,
+  } from './esm/index.mjs';
+
+
+  let seed_str = 'an example seed string';
+
+  let samples = {
+    alea: prng_alea(seed_str),
+    xor128: prng_xor128(seed_str),
+    tychei: prng_tychei(seed_str),
+    xorwow: prng_xorwow(seed_str),
+    xor4096: prng_xor4096(seed_str),
+    xorshift7: prng_xorshift7(seed_str),
+    arc4: prng_arc4(seed_str),
+  };
+
+  for (let [name, rng] of Object.entries(samples)) {
+    console.log(name);
+    console.table(gen_sample(rng));
+  }
+
+  function gen_sample(myrng) {
+    return {
+      prng: [myrng(), myrng(), myrng()],
+      quick: [myrng.quick(), myrng.quick(), myrng.quick()],
+      int32: [myrng.int32(), myrng.int32(), myrng.int32()],
+      double: [myrng.double(), myrng.double(), myrng.double()],
+    };
+  }
+
+</script>
+</body>
