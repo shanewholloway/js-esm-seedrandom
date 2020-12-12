@@ -1,6 +1,6 @@
 {
   "name": "esm-seedrandom",
-  "version": "3.0.5",
+  "version": "3.0.5-0",
   "description": "Seeded random number generator for Javascript, ported to ES Modules.",
   "module": "esm/seedrandom.mjs",
   "browser": "esm/seedrandom.min.mjs",
