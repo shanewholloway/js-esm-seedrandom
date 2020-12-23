@@ -145,8 +145,9 @@ the same state (by passing that saved object back as the state option).
 Mocha-based [live unittests](https://shanewholloway.github.io/js-esm-seedrandom/unittest.html)
 for reproducability and validation of state capture and restore.
 
-In NodeJS, validation of state snapshot compatability with the original [seedrandom][] CommonJS implementation is performed.
+In NodeJS [unittests][gh-actions-unittests], validation of state snapshot compatability with the original [seedrandom][] CommonJS implementation is performed.
 
+ [gh-actions-unittests]: https://github.com/shanewholloway/js-esm-seedrandom/actions?query=workflow%3A%22Node.js+CI%22
 
 ## LICENSE (MIT)
 
