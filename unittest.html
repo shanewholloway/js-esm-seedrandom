@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset="utf-8">
+  <title>esm-seedrandom unittests</title>
+  <link rel='icon' href='data:image/png;base64,' />
+
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/mocha@8.2.1/mocha.css'>
+  <script crossorigin src='https://cdn.jsdelivr.net/npm/mocha@8.2.1/mocha.js'></script>
+
+</head>
+<body>
+<div id="mocha"></div>
+
+<script>
+  window.require = module => window[module]
+  mocha.setup({ ui: 'bdd' })
+</script>
+<script src='./unittest/__unittest.iife.js'></script>
+<script>
+  mocha.run()
+</script>
+</body>
+</html>

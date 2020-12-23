@@ -21,6 +21,11 @@
   "bugs": {
     "url": "https://github.com/shanewholloway/js-esm-seedrandom/issues"
   },
+  "type": "module",
+  "module": "./esm/index.mjs",
+  "main": "./esm/index.mjs",
+  "browser": "./esm/index.mjs",
+  "dependencies": {},
   "devDependencies": {
     "rollup": "^2.34.2",
     "rollup-plugin-terser": "^7.0.2"
@@ -30,6 +35,6 @@
     "build": "rollup --config",
     "watch": "npm -s run build -- --watch",
     "pretest": "npm -s run build",
-    "test": "true"
+    "test": "cd unittest && npm -s run test"
   }
 }

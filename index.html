@@ -38,20 +38,27 @@
 
   let seed_str = 'an example seed string';
 
-  let samples = {
-    alea: prng_alea(seed_str),
-    xor128: prng_xor128(seed_str),
-    tychei: prng_tychei(seed_str),
-    xorwow: prng_xorwow(seed_str),
-    xor4096: prng_xor4096(seed_str),
-    xorshift7: prng_xorshift7(seed_str),
-    arc4: prng_arc4(seed_str),
-  };
+  console.log('alea:')
+  console.table(gen_sample(prng_alea(seed_str)))
 
-  for (let [name, rng] of Object.entries(samples)) {
-    console.log(name);
-    console.table(gen_sample(rng));
-  }
+  console.log('xor128:')
+  console.table(gen_sample(prng_xor128(seed_str)))
+
+  console.log('tychei:')
+  console.table(gen_sample(prng_tychei(seed_str)))
+
+  console.log('xorwow:')
+  console.table(gen_sample(prng_xorwow(seed_str)))
+
+  console.log('xor4096:')
+  console.table(gen_sample(prng_xor4096(seed_str)))
+
+  console.log('xorshift7:')
+  console.table(gen_sample(prng_xorshift7(seed_str)))
+
+  console.log('arc4:')
+  console.table(gen_sample(prng_arc4(seed_str)))
+
 
   function gen_sample(myrng) {
     return {
