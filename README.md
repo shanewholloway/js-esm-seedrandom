@@ -39,7 +39,28 @@ Unit tested for number generator compatability with original [seedrandom][] Comm
 
 ## Fast PRNG Algorithms
 
-The package includes several fast PRNGs.  To use Johannes Baagøe's extremely fast Alea PRNG:
+The package includes several fast PRNGs.
+
+|PRNG name         | Period      | Author               |
+|------------------|-------------|----------------------|
+|[prng_alea][]     | ~2^116      | Baagøe               |
+|[prng_xor128][]   | 2^128-1     | Marsaglia            |
+|[prng_tychei][]   | ~2^127      | Neves/Araujo (ChaCha)|
+|[prng_xorwow][]   | 2^192-2^32  | Marsaglia            |
+|[prng_xor4096][]  | 2^4096-2^32 | Brent (xorgens)      |
+|[prng_xorshift7][]| 2^256-1     | Panneton/L'ecuyer    |
+|[prng_arc4][]     | ~2^1600     | Bau (ARC4)           |
+
+ [prng_alea]: ./docs/alea.md
+ [prng_xor128]: ./docs/xor128.md
+ [prng_tychei]: ./docs/tychei.md
+ [prng_xorwow]: ./docs/xorwow.md
+ [prng_xor4096]: ./docs/xor4096.md
+ [prng_xorshift7]: ./docs/xorshift7.md
+ [prng_arc4]: ./docs/arc4.md
+
+
+To use Johannes Baagøe's extremely fast Alea PRNG:
 
 
 ```javascript
@@ -57,21 +78,10 @@ console.log(arng.double());        // Always 0.8297006866124559
 console.log(arng.int32());         // Always 1076136327
 ```
 
-
-|PRNG name       | Period      | Author               |
-|----------------|-------------|----------------------|
-|`prng_alea`     | ~2^116      | Baagøe               |
-|`prng_xor128`   | 2^128-1     | Marsaglia            |
-|`prng_tychei`   | ~2^127      | Neves/Araujo (ChaCha)|
-|`prng_xorwow`   | 2^192-2^32  | Marsaglia            |
-|`prng_xor4096`  | 2^4096-2^32 | Brent (xorgens)      |
-|`prng_xorshift7`| 2^256-1     | Panneton/L'ecuyer    |
-|`prng_arc4`     | ~2^1600     | Bau (ARC4)           |
-
-
 ## Docs
 
 See the [API docs](./docs/api.md).
+
 
 ### Overview
 
