@@ -11,8 +11,13 @@ Unit tested for number generator compatability with original [seedrandom][] Comm
 
  [seedrandom]: https://github.com/davidbau/seedrandom
 
-## Use
 
+## Demo
+
+GitHub Pages-based [Live demo](https://shanewholloway.github.io/js-esm-seedrandom/index.html)
+
+
+## Use
 
 ## Fast PRNG Algorithms
 
@@ -134,6 +139,13 @@ However, if the `state` option is provided, the prng gets a state() method
 that returns a plain object the can be used to reconstruct a prng later in
 the same state (by passing that saved object back as the state option).
 
+
+## Unit tests
+
+Mocha-based [live unittests](https://shanewholloway.github.io/js-esm-seedrandom/unittest.html)
+for reproducability and validation of state capture and restore.
+
+In NodeJS, validation of state snapshot compatability with the original [seedrandom][] CommonJS implementation is performed.
 
 
 ## LICENSE (MIT)
