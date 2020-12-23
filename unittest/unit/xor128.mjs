@@ -30,3 +30,27 @@ describe('xor128', () => {
     describe('original seedrandom (CommonJS)', () =>
       test_prng_alg('xor128', cjs_prng_xor128, snap))
 })
+
+describe('xor128 with state', () => {
+  let _ans_shared = [ 0.1681680935434997, 0.5715856794267893, 0.9688262098934501 ]
+  const snap = {
+    opt: {state: {"x":2129486936,"y":1018211045,"z":-1036713708,"w":1054309448}},
+    direct: _ans_shared,
+    quick: _ans_shared,
+    int32: [ 722276462, -1840025496, -133890409 ],
+    double: [ 0.16816834048541995, 0.9688260512550894, 0.24403439393014414 ],
+  }
+
+  describe('shared', () =>
+    test_prng_alg('xor128', prng_xor128, snap))
+
+  describe('isolated', () =>
+    test_prng_alg('xor128', prng_xor128_isolated, snap))
+
+  describe('isolated minified', () =>
+    test_prng_alg('xor128', prng_xor128_minify, snap))
+
+  if (cjs_prng_xor128)
+    describe('original seedrandom (CommonJS)', () =>
+      test_prng_alg('xor128', cjs_prng_xor128, snap))
+})

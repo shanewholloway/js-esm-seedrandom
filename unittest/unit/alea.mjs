@@ -30,3 +30,28 @@ describe('alea', () => {
     describe('original seedrandom (CommonJS)', () =>
       test_prng_alg('alea', cjs_prng_alea, snap))
 })
+
+describe('alea with state', () => {
+  let _ans_shared = [ 0.6605129039380699, 0.2608753452077508, 0.637230877764523 ]
+  const snap = {
+    opt: { state: { c: 223391, s0: 0.19618378719314933, s1: 0.2233675413299352, s2: 0.9835012815892696 }},
+
+    direct: _ans_shared,
+    quick: _ans_shared,
+    int32: [ -1458085975, 1120451076, -1558081516 ],
+    double: [ 0.6605129039988097, 0.6372308778926634, 0.046496662999518046 ]
+  }
+
+  describe('shared', () =>
+    test_prng_alg('alea', prng_alea, snap))
+
+  describe('isolated', () =>
+    test_prng_alg('alea', prng_alea_isolated, snap))
+
+  describe('isolated minified', () =>
+    test_prng_alg('alea', prng_alea_minify, snap))
+
+  if (cjs_prng_alea)
+    describe('original seedrandom (CommonJS)', () =>
+      test_prng_alg('alea', cjs_prng_alea, snap))
+})

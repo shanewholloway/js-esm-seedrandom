@@ -31,3 +31,29 @@ describe('tychei', () => {
     describe('original seedrandom (CommonJS)', () =>
       test_prng_alg('tychei', cjs_prng_tychei, snap))
 })
+
+describe('tychei with state', () => {
+  let _ans_shared = [ 0.9540062851738185, 0.14673241949640214, 0.15592244057916105 ]
+  const snap = {
+    opt: {state: {"a":1114141776,"b":1081436905,"c":2079925175,"d":1230677184}},
+
+    direct: _ans_shared,
+    quick: _ans_shared,
+    int32: [ -197541501, 630210943, 669681783 ],
+    double: [ 0.9540062650358293, 0.15592288850046654, 0.6584937794035384 ],
+  }
+
+
+  describe('shared', () =>
+    test_prng_alg('tychei', prng_tychei, snap))
+
+  describe('isolated', () =>
+    test_prng_alg('tychei', prng_tychei_isolated, snap))
+
+  describe('isolated minified', () =>
+    test_prng_alg('tychei', prng_tychei_minify, snap))
+
+  if (cjs_prng_tychei)
+    describe('original seedrandom (CommonJS)', () =>
+      test_prng_alg('tychei', cjs_prng_tychei, snap))
+})

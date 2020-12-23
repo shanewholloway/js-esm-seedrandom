@@ -1,6 +1,91 @@
 (function () {
 	'use strict';
 
+	var has = Object.prototype.hasOwnProperty;
+
+	function find(iter, tar, key) {
+		for (key of iter.keys()) {
+			if (dequal(key, tar)) return key;
+		}
+	}
+
+	function dequal(foo, bar) {
+		var ctor, len, tmp;
+		if (foo === bar) return true;
+
+		if (foo && bar && (ctor=foo.constructor) === bar.constructor) {
+			if (ctor === Date) return foo.getTime() === bar.getTime();
+			if (ctor === RegExp) return foo.toString() === bar.toString();
+
+			if (ctor === Array) {
+				if ((len=foo.length) === bar.length) {
+					while (len-- && dequal(foo[len], bar[len]));
+				}
+				return len === -1;
+			}
+
+			if (ctor === Set) {
+				if (foo.size !== bar.size) {
+					return false;
+				}
+				for (len of foo) {
+					tmp = len;
+					if (tmp && typeof tmp === 'object') {
+						tmp = find(bar, tmp);
+						if (!tmp) return false;
+					}
+					if (!bar.has(tmp)) return false;
+				}
+				return true;
+			}
+
+			if (ctor === Map) {
+				if (foo.size !== bar.size) {
+					return false;
+				}
+				for (len of foo) {
+					tmp = len[0];
+					if (tmp && typeof tmp === 'object') {
+						tmp = find(bar, tmp);
+						if (!tmp) return false;
+					}
+					if (!dequal(len[1], bar.get(tmp))) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			if (ctor === ArrayBuffer) {
+				foo = new Uint8Array(foo);
+				bar = new Uint8Array(bar);
+			} else if (ctor === DataView) {
+				if ((len=foo.byteLength) === bar.byteLength) {
+					while (len-- && foo.getInt8(len) === bar.getInt8(len));
+				}
+				return len === -1;
+			}
+
+			if (ArrayBuffer.isView(foo)) {
+				if ((len=foo.byteLength) === bar.byteLength) {
+					while (len-- && foo[len] === bar[len]);
+				}
+				return len === -1;
+			}
+
+			if (!ctor || typeof foo === 'object') {
+				len = 0;
+				for (ctor in foo) {
+					if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
+					if (!(ctor in bar) || !dequal(foo[ctor], bar[ctor])) return false;
+				}
+				return Object.keys(bar).length === len;
+			}
+		}
+
+		return foo !== foo && bar !== bar;
+	}
+
 	let FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, isTTY=true;
 	if (typeof process !== 'undefined') {
 		({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = process.env);
@@ -364,6 +449,11 @@
 	  };
 	}
 
+	var characterDiff = new Diff();
+	function diffChars(oldStr, newStr, options) {
+	  return characterDiff.diff(oldStr, newStr, options);
+	}
+
 	//
 	// Ranges and exceptions:
 	// Latin-1 Supplement, 0080–00FF
@@ -570,6 +660,10 @@
 	  return value;
 	};
 
+	function diffArrays(oldArr, newArr, callback) {
+	  return arrayDiff.diff(oldArr, newArr, callback);
+	}
+
 	const colors = {
 		'--': $.red,
 		'··': $.grey,
@@ -601,6 +695,36 @@
 		return out;
 	}
 
+	// TODO: want better diffing
+	//~> complex items bail outright
+	function arrays(input, expect) {
+		let arr = diffArrays(input, expect);
+		let i=0, j=0, k=0, tmp, val, char, isObj, str;
+		let out = LOG('··', '[');
+
+		for (; i < arr.length; i++) {
+			char = (tmp = arr[i]).removed ? '--' : tmp.added ? '++' : '··';
+
+			if (tmp.added) {
+				out += colors[char]().underline(TITLE('Expected:')) + '\n';
+			} else if (tmp.removed) {
+				out += colors[char]().underline(TITLE('Actual:')) + '\n';
+			}
+
+			for (j=0; j < tmp.value.length; j++) {
+				isObj = (tmp.value[j] && typeof tmp.value[j] === 'object');
+				val = stringify(tmp.value[j]).split(/\r?\n/g);
+				for (k=0; k < val.length;) {
+					str = '  ' + val[k++] + (isObj ? '' : ',');
+					if (isObj && k === val.length && (j + 1) < tmp.value.length) str += ',';
+					out += LOG(char, str);
+				}
+			}
+		}
+
+		return out + LOG('··', ']');
+	}
+
 	function lines(input, expect, linenum = 0) {
 		let i=0, tmp, output='';
 		let arr = diffLines(input, expect);
@@ -612,6 +736,137 @@
 		}
 
 		return output;
+	}
+
+	function chars(input, expect) {
+		let arr = diffChars(input, expect);
+		let i=0, output='', tmp;
+
+		let l1 = input.length;
+		let l2 = expect.length;
+
+		let p1 = PRETTY(input);
+		let p2 = PRETTY(expect);
+
+		tmp = arr[i];
+
+		if (l1 === l2) ; else if (tmp.removed && arr[i + 1]) {
+			let del = tmp.count - arr[i + 1].count;
+			if (del == 0) ; else if (del > 0) {
+				expect = ' '.repeat(del) + expect;
+				p2 = ' '.repeat(del) + p2;
+				l2 += del;
+			} else if (del < 0) {
+				input = ' '.repeat(-del) + input;
+				p1 = ' '.repeat(-del) + p1;
+				l1 += -del;
+			}
+		}
+
+		output += direct(p1, p2, l1, l2);
+
+		if (l1 === l2) {
+			for (tmp='  '; i < l1; i++) {
+				tmp += input[i] === expect[i] ? ' ' : '^';
+			}
+		} else {
+			for (tmp='  '; i < arr.length; i++) {
+				tmp += ((arr[i].added || arr[i].removed) ? '^' : ' ').repeat(Math.max(arr[i].count, 0));
+				if (i + 1 < arr.length && ((arr[i].added && arr[i+1].removed) || (arr[i].removed && arr[i+1].added))) {
+					arr[i + 1].count -= arr[i].count;
+				}
+			}
+		}
+
+		return output + $.red(tmp);
+	}
+
+	function direct(input, expect, lenA = String(input).length, lenB = String(expect).length) {
+		let gutter = 4;
+		let lenC = Math.max(lenA, lenB);
+		let typeA=typeof input, typeB=typeof expect;
+
+		if (typeA !== typeB) {
+			gutter = 2;
+
+			let delA = gutter + lenC - lenA;
+			let delB = gutter + lenC - lenB;
+
+			input += ' '.repeat(delA) + $.dim(`[${typeA}]`);
+			expect += ' '.repeat(delB) + $.dim(`[${typeB}]`);
+
+			lenA += delA + typeA.length + 2;
+			lenB += delB + typeB.length + 2;
+			lenC = Math.max(lenA, lenB);
+		}
+
+		let output = colors['++']('++' + expect + ' '.repeat(gutter + lenC - lenB) + TITLE('(Expected)')) + '\n';
+		return output + colors['--']('--' + input + ' '.repeat(gutter + lenC - lenA) + TITLE('(Actual)')) + '\n';
+	}
+
+	function sort(input, expect) {
+		var k, i=0, tmp, isArr = Array.isArray(input);
+		var keys=[], out=isArr ? Array(input.length) : {};
+
+		if (isArr) {
+			for (i=0; i < out.length; i++) {
+				tmp = input[i];
+				if (!tmp || typeof tmp !== 'object') out[i] = tmp;
+				else out[i] = sort(tmp, expect[i]); // might not be right
+			}
+		} else {
+			for (k in expect)
+				keys.push(k);
+
+			for (; i < keys.length; i++) {
+				if (Object.prototype.hasOwnProperty.call(input, k = keys[i])) {
+					if (!(tmp = input[k]) || typeof tmp !== 'object') out[k] = tmp;
+					else out[k] = sort(tmp, expect[k]);
+				}
+			}
+
+			for (k in input) {
+				if (!out.hasOwnProperty(k)) {
+					out[k] = input[k]; // expect didnt have
+				}
+			}
+		}
+
+		return out;
+	}
+
+	function circular() {
+		var cache = new Set;
+		return function print(key, val) {
+			if (val === void 0) return '[__VOID__]';
+			if (typeof val === 'number' && val !== val) return '[__NAN__]';
+			if (!val || typeof val !== 'object') return val;
+			if (cache.has(val)) return '[Circular]';
+			cache.add(val); return val;
+		}
+	}
+
+	function stringify(input) {
+		return JSON.stringify(input, circular(), 2).replace(/"\[__NAN__\]"/g, 'NaN').replace(/"\[__VOID__\]"/g, 'undefined');
+	}
+
+	function compare(input, expect) {
+		if (Array.isArray(expect)) return arrays(input, expect);
+		if (expect instanceof RegExp) return chars(''+input, ''+expect);
+
+		if (expect && typeof expect == 'object') {
+			input = stringify(sort(input, expect));
+			expect = stringify(expect);
+		}
+
+		let isA = typeof input == 'string';
+		let isB = typeof expect == 'string';
+
+		if (isA && /\r?\n/.test(input)) return lines(input, ''+expect);
+		if (isB && /\r?\n/.test(expect)) return lines(''+input, expect);
+		if (isA && isB) return chars(input, expect);
+
+		return direct(input, expect);
 	}
 
 	function dedent(str) {
@@ -644,6 +899,10 @@
 		throw new Assertion({ actual, expects, operator, message, details, generated: !msg });
 	}
 
+	function equal(val, exp, msg) {
+		assert(dequal(val, exp), val, exp, 'equal', compare, 'Expected values to be deeply equal:', msg);
+	}
+
 	function snapshot(val, exp, msg) {
 		val=dedent(val); exp=dedent(exp);
 		assert(val === exp, val, exp, 'snapshot', lines, 'Expected value to match snapshot:', msg);
@@ -656,7 +915,7 @@
 	    return snapshot(sz_actual, sz_expected)
 
 	  } catch (err) {
-	    console.error(err.details);
+	    //console.error(err.details)
 	    console.error({[snap_name]: actual});
 	    throw err
 	  }
@@ -664,29 +923,49 @@
 
 	function test_prng_alg(name, prng_alg, snap) {
 	  it(`${name} direct`, () => {
-	    let prng = prng_alg(snap.seed);
+	    let prng = prng_alg(snap.seed, snap.opt);
 	    let res = Array.from({length:3}, () => prng());
 	    test_snap(res, snap.direct, 'direct');
 	  });
 
 	  it(`${name}.quick()`, () => {
-	    let prng = prng_alg(snap.seed);
+	    let prng = prng_alg(snap.seed, snap.opt);
 	    let res = Array.from({length:3}, () => prng.quick());
 	    test_snap(res, snap.quick, 'quick');
 	  });
 
 	  it(`${name}.int32()`, () => {
-	    let prng = prng_alg(snap.seed);
+	    let prng = prng_alg(snap.seed, snap.opt);
 	    let res = Array.from({length:3}, () => prng.int32());
 	    test_snap(res, snap.int32, 'int32');
 	  });
 
 	  it(`${name}.double()`, () => {
-	    let prng = prng_alg(snap.seed);
+	    let prng = prng_alg(snap.seed, snap.opt);
 	    let res = Array.from({length:3}, () => prng.double());
 	    test_snap(res, snap.double, 'double');
 	  });
 
+	  it(`${name} state with 1024 iterations`, () => {
+	    let prng = prng_alg(snap.seed, {...snap.opt, state: true});
+
+	    for (let i=0; i<1024; i++) {
+	      prng();
+	      prng.quick();
+	      prng.int32();
+	      prng.double();
+	    }
+
+	    let state = JSON.parse(JSON.stringify(prng.state()));
+	    let dup_prng = prng_alg('', {...snap.opt, state});
+
+	    for (let i=0; i<5; i++) {
+	      equal(dup_prng(), prng());
+	      equal(dup_prng.quick(), prng.quick());
+	      equal(dup_prng.int32(), prng.int32());
+	      equal(dup_prng.double(), prng.double());
+	    }
+	  });
 	}
 
 	function _prng_restore(prng, xg, opts) {
@@ -1357,6 +1636,31 @@
 	      test_prng_alg('alea', cjs_prng_alea, snap));
 	});
 
+	describe('alea with state', () => {
+	  let _ans_shared = [ 0.6605129039380699, 0.2608753452077508, 0.637230877764523 ];
+	  const snap = {
+	    opt: { state: { c: 223391, s0: 0.19618378719314933, s1: 0.2233675413299352, s2: 0.9835012815892696 }},
+
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ -1458085975, 1120451076, -1558081516 ],
+	    double: [ 0.6605129039988097, 0.6372308778926634, 0.046496662999518046 ]
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('alea', prng_alea, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('alea', prng_alea$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('alea', t, snap));
+
+	  if (cjs_prng_alea)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('alea', cjs_prng_alea, snap));
+	});
+
 	function _prng_restore$2(prng, xg, opts) {
 	  let state = opts && opts.state;
 	  if (state) {
@@ -1448,6 +1752,30 @@
 	    quick: _ans_shared,
 	    int32: [-188867866, -1519869986, 1621200086],
 	    double: [0.9560259085310425,0.37746513052634856,0.7683549630822994],
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('xor128', prng_xor128, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('xor128', prng_xor128$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('xor128', t$1, snap));
+
+	  if (cjs_prng_xor128)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('xor128', cjs_prng_xor128, snap));
+	});
+
+	describe('xor128 with state', () => {
+	  let _ans_shared = [ 0.1681680935434997, 0.5715856794267893, 0.9688262098934501 ];
+	  const snap = {
+	    opt: {state: {"x":2129486936,"y":1018211045,"z":-1036713708,"w":1054309448}},
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ 722276462, -1840025496, -133890409 ],
+	    double: [ 0.16816834048541995, 0.9688260512550894, 0.24403439393014414 ],
 	  };
 
 	  describe('shared', () =>
@@ -1576,6 +1904,32 @@
 	      test_prng_alg('tychei', cjs_prng_tychei, snap));
 	});
 
+	describe('tychei with state', () => {
+	  let _ans_shared = [ 0.9540062851738185, 0.14673241949640214, 0.15592244057916105 ];
+	  const snap = {
+	    opt: {state: {"a":1114141776,"b":1081436905,"c":2079925175,"d":1230677184}},
+
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ -197541501, 630210943, 669681783 ],
+	    double: [ 0.9540062650358293, 0.15592288850046654, 0.6584937794035384 ],
+	  };
+
+
+	  describe('shared', () =>
+	    test_prng_alg('tychei', prng_tychei, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('tychei', prng_tychei$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('tychei', t$2, snap));
+
+	  if (cjs_prng_tychei)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('tychei', cjs_prng_tychei, snap));
+	});
+
 	function _prng_restore$4(prng, xg, opts) {
 	  let state = opts && opts.state;
 	  if (state) {
@@ -1676,6 +2030,30 @@
 	    quick: _ans_shared,
 	    int32: [ -1821646071, 1019102687, 1595986471 ],
 	    double: [0.5758649050132439,0.37159468988193467,0.9183901875866184],
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('xorwow', prng_xorwow, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('xorwow', prng_xorwow$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('xorwow', t$3, snap));
+
+	  if (cjs_prng_xorwow)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('xorwow', cjs_prng_xorwow, snap));
+	});
+
+	describe('xorwow with state', () => {
+	  let _ans_shared = [ 0.9834630433470011, 0.34372456138953567, 0.5046766495797783 ];
+	  const snap = {
+	    opt: {state: {"x":733911711,"y":1463434334,"z":-1393983784,"w":-1618969858,"v":-698200019,"d":671784302}},
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ -71025688, 1476285750, -2127397591 ],
+	    double: [ 0.9834629744170005, 0.5046764181761018, 0.31689916339742574 ],
 	  };
 
 	  describe('shared', () =>
@@ -1836,6 +2214,30 @@
 	      test_prng_alg('xor4096', cjs_prng_xor4096, snap));
 	});
 
+	describe('xor4096 with state', () => {
+	  let _ans_shared = [ 0.5910869480576366, 0.4439348168671131, 0.8686158978380263 ];
+	  const snap = {
+	    opt: {state: {"i":127,"w":-1777552588,"X":[-257799923,1406113259,1375561534,1532596805,1509840809,-1348605322,-1254322747,-1647634294,1321702170,1688648415,2143011051,2070557632,1427563947,-1912522375,1482709833,228717764,875099773,-81025456,749270504,-2063915448,2006827369,-192710701,800528103,-1987819366,-2104188427,992696610,-2070727171,1403673013,1656307029,-1727936959,1704606474,-1450207342,1594349482,-1682754632,-2022753359,1713822413,-1235769415,-566195523,1507698409,-2133788888,1810622117,-279989735,-1669035321,-2065088392,-727359429,-883176448,-465270756,-702833461,-1333148752,-965669287,1532434520,-177638986,-221201882,958765335,296186856,2032480663,-534741483,-1101374780,-611434991,-1776565680,-240327092,-1407954063,1936741697,1792640521,677639556,-1368051483,-1190958976,125668068,1280076544,1038572315,-1944891757,-363035801,139408245,-1912512970,1617681372,268929814,-23247734,1448073547,-1965512623,875199335,533545432,-27159931,-1662305229,1302349679,-629665445,375081342,1859322184,425055243,227277240,413125267,-917873087,-1120263347,-1213300338,-1459178021,1691464233,824853583,-155515193,-1894913238,-1002792824,-1372623340,1821168545,498227719,-75567295,952668218,1781920061,-1873995929,92998523,428831074,2043251958,-1952774412,-1040364735,1381392966,-85754804,1649531372,358812297,436037272,-988310603,-622053250,1524206658,680838942,433113176,1806270828,-925518775,-16246847,1505879177,804231832,68567600,2049015687]}},
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ -1756268185, 1906685520, -564290422 ],
+	    double: [ 0.591087076156052, 0.8686157961146537, 0.72138522418555 ],
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('xor4096', prng_xor4096, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('xor4096', prng_xor4096$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('xor4096', t$4, snap));
+
+	  if (cjs_prng_xor4096)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('xor4096', cjs_prng_xor4096, snap));
+	});
+
 	function _prng_restore$6(prng, xg, opts) {
 	  let state = opts && opts.state;
 	  if (state) {
@@ -1936,6 +2338,30 @@
 	    quick: _ans_shared,
 	    int32: [ 941756778, -621300173, 1134986839 ],
 	    double: [0.21927016036142388,0.2642595533104317,0.3881930901075237],
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('xorshift7', prng_xorshift7, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('xorshift7', prng_xorshift7$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('xorshift7', t$5, snap));
+
+	  if (cjs_prng_xorshift7)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('xorshift7', cjs_prng_xorshift7, snap));
+	});
+
+	describe('xorshift7 with state', () => {
+	  let _ans_shared = [ 0.5485894610174, 0.1137475436553359, 0.2735925179440528 ];
+	  const snap = {
+	    opt: { state: { i: 0, x: [ -1534938808, 2033299828, 2137027632, -1736997815, 1638824590, 466195994, -146690448, 1900193694 ]}},
+	    direct: _ans_shared,
+	    quick: _ans_shared,
+	    int32: [ -1938793502, 488541980, 1175070917 ],
+	    double: [ 0.5485892838227957, 0.27359278181790225, 0.27243765569291334 ]
 	  };
 
 	  describe('shared', () =>
@@ -2103,13 +2529,36 @@
 	const cjs_prng_arc4 = require('seedrandom');
 
 	describe('arc4', () => {
-	  let _ans_shared =
-	    [ 0.7396757600041567, 0.2125229710920903, 0.6653061318678898 ];
+	  let _ans_shared = [ 0.7396757600041567, 0.2125229710920903, 0.6653061318678898 ];
 	  const snap = {
 	    seed: 'an example seed string',
 	    direct: _ans_shared,
 	    quick: [0.7396757598035038,0.8617978817783296,0.4058805995155126],
 	    int32: [-1118084098,-593573578,1743243901],
+	    double: _ans_shared,
+	  };
+
+	  describe('shared', () =>
+	    test_prng_alg('arc4', prng_arc4, snap));
+
+	  describe('isolated', () =>
+	    test_prng_alg('arc4', prng_arc4$1, snap));
+
+	  describe('isolated minified', () =>
+	    test_prng_alg('arc4', t$6, snap));
+
+	  if (cjs_prng_arc4)
+	    describe('original seedrandom (CommonJS)', () =>
+	      test_prng_alg('arc4', cjs_prng_arc4, snap));
+	});
+
+	describe('arc4 with state', () => {
+	  let _ans_shared = [ 0.5468744446736922, 0.49507571990794474, 0.04433217638437844 ];
+	  const snap = {
+	    opt: {state: {i:122, j:135, S:[250,63,119,34,198,222,149,191,114,212,131,93,202,10,159,247,178,196,108,219,145,244,102,110,47,157,165,171,210,46,1,22,221,120,50,200,163,252,140,99,205,11,101,168,84,104,60,71,248,56,7,74,79,253,213,53,237,175,179,112,142,17,103,194,59,88,87,57,147,26,176,229,146,141,72,40,216,92,9,14,230,32,8,228,133,67,69,0,62,245,41,39,181,232,48,37,124,240,55,249,180,77,243,27,227,78,73,89,169,33,106,44,242,254,4,236,24,29,217,192,185,12,109,144,75,65,31,170,43,138,255,52,97,132,162,85,161,207,150,154,137,80,184,167,136,152,3,58,199,234,164,143,177,64,172,204,6,238,174,94,90,186,225,111,197,235,107,148,61,158,113,130,95,42,129,2,246,203,218,241,5,233,23,195,135,189,68,160,35,209,183,54,36,201,127,223,226,128,105,214,117,20,38,100,134,86,45,206,239,182,30,76,231,49,21,208,193,156,155,215,126,220,125,116,13,83,190,251,123,15,16,118,151,18,28,82,70,98,187,122,173,25,19,121,211,66,91,153,81,188,96,224,115,51,139,166]}},
+	    direct: _ans_shared,
+	    quick: [ 0.5468744444660842, 0.8916697199456394, 0.7393842963501811 ],
+	    int32: [ -1946159442, -465275010, -1119335924 ],
 	    double: _ans_shared,
 	  };
 
