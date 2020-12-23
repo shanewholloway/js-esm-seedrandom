@@ -1,6 +1,6 @@
 # esm-seedrandom
 
-Seeded random number generator for JavaScript, ported to ES Modules.
+Explicitly seeded random number generator for JavaScript, ported to ES Modules.
 
 Unit tested for number generator compatability with original [seedrandom][] CommonJS NPM package.</p>
 
