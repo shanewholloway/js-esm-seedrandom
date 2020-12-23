@@ -2,10 +2,14 @@
 
 Seeded random number generator for JavaScript, ported to ES Modules.
 
+Unit tested for number generator compatability with original [seedrandom][] CommonJS NPM package.</p>
+
 * Version: 3.0.5
 * Author: David Bau
 * Date: 2019-09-14
 * ES Modules port in 2020-12 by Shane Holloway
+
+ [seedrandom]: https://www.npmjs.com/package/seedrandom
 
 
 ## Use
@@ -17,19 +21,19 @@ Seeded random number generator for JavaScript, ported to ES Modules.
   let myrng = prng_alea('an example seed string')
 
   console.log(myrng()); // Always 0.2594452982302755
-  console.log(myrng()); // Always 0.8249292692635208
-  console.log(myrng()); // Always 0.42271768930368125
+  console.log(myrng()); // Always 0.8253263409715146
+  console.log(myrng()); // Always 0.42280301195569336
 
   // Use "quick" to get only 32 bits of randomness in a float.
-  console.log(myrng.quick()); // Always 0.9041450754739344
-  console.log(myrng.quick()); // Always 0.2318330816924572
+  console.log(myrng.quick()); // Always 0.9045045920647681
+  console.log(myrng.quick()); // Always 0.7626296668313444
 
   // Use "int32" to get a 32 bit (signed) integer
-  console.log(myrng.int32()); // Always -837787218
-  console.log(myrng.int32()); // Always 436021751
+  console.log(myrng.int32()); // Always 1157605039
+  console.log(myrng.int32()); // Always 346379077
 
-  console.log(myrng.double()); // Always 0.11515812985359886
-  console.log(myrng.double()); // Always 0.5701184166211825
+  console.log(myrng.double()); // Always 0.9541419381134651
+  console.log(myrng.double()); // Always 0.7982540860513401
 </script>
 ```
 
@@ -55,15 +59,15 @@ console.log(arng.int32());         // Always 1076136327
 ```
 
 
-|PRNG name       | Time vs native | Period      | Author               |
-|----------------|----------------|-------------|----------------------|
-|`prng_alea`     |  1.95 ns, 0.9x | ~2^116      | Baagøe               |
-|`prng_xor128`   |  2.04 ns, 0.9x | 2^128-1     | Marsaglia            |
-|`prng_tychei`   |  2.32 ns, 1.1x | ~2^127      | Neves/Araujo (ChaCha)|
-|`prng_xorwow`   |  2.40 ns, 1.1x | 2^192-2^32  | Marsaglia            |
-|`prng_xor4096`  |  2.40 ns, 1.1x | 2^4096-2^32 | Brent (xorgens)      |
-|`prng_xorshift7`|  2.64 ns, 1.3x | 2^256-1     | Panneton/L'ecuyer    |
-|`prng_arc4`     |  3.80 ns, 1.8x | ~2^1600     | Bau (ARC4)           |
+|PRNG name       | Period      | Author               |
+|----------------|-------------|----------------------|
+|`prng_alea`     | ~2^116      | Baagøe               |
+|`prng_xor128`   | 2^128-1     | Marsaglia            |
+|`prng_tychei`   | ~2^127      | Neves/Araujo (ChaCha)|
+|`prng_xorwow`   | 2^192-2^32  | Marsaglia            |
+|`prng_xor4096`  | 2^4096-2^32 | Brent (xorgens)      |
+|`prng_xorshift7`| 2^256-1     | Panneton/L'ecuyer    |
+|`prng_arc4`     | ~2^1600     | Bau (ARC4)           |
 
 
 ## Docs
@@ -75,6 +79,19 @@ npm install esm-seedrandom
 or in HTML,
 
 ```html
+<script type='module'>
+  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
+
+  // or use the individual algorithms by module
+
+  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.mjs'
+  import {prng_xor128} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor128.min.mjs'
+  import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/tychei.min.mjs'
+  import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorwow.min.mjs'
+  import {prng_xor4096} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor4096.min.mjs'
+  import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorshift7.min.mjs'
+  import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/arc4.min.mjs'
+</script>
 ```
 
 #### Saving & Restoring PRNG state

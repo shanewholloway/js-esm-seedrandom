@@ -1,7 +1,6 @@
-import rpi_commonjs from '@rollup/plugin-commonjs'
 import rpi_resolve from '@rollup/plugin-node-resolve';
 
-const plugins = [ rpi_resolve(), rpi_commonjs() ]
+const plugins = [ rpi_resolve() ]
 
 export default [
   { input: `unittest.mjs`, plugins,

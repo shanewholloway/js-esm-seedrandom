@@ -7,67 +7,74 @@
 
   <link rel='icon' href='data:image/png;base64,' />
   <link rel='stylesheet' crossorigin='anonymous' href='https://cdn.jsdelivr.net/npm/purecss@1.0.1/build/pure-min.css' />
+  <link rel='stylesheet' crossorigin='anonymous' href='https://cdn.jsdelivr.net/npm/prismjs@1.20.0/themes/prism.css' />
 
   <style>
     body {
-      max-width: 80ch;
       margin: 2rem auto;
       padding: 2rem;
     }
-
-    script.demo {
-      display: block;
-      white-space: pre;
-      font-family: monospace;
+    output {
+      display: flex;
     }
   </style>
+
 </head>
 
 <body>
-<script class='demo' type="module">
-  import {
-    prng_alea,
-    prng_xor128,
-    prng_tychei,
-    prng_xorwow,
-    prng_xor4096,
-    prng_xorshift7,
-    prng_arc4,
-  } from './esm/index.mjs';
 
+<main>
+  <h1>esm-seedrandom</h1>
+
+  <p>Seeded random number generator for JavaScript, ported to ES Modules.</p>
+
+  <p><a href='./unittest.html'>Unit tested</a> for number generator compatability with original <a href='https://www.npmjs.com/package/seedrandom'>seedrandom</a> CommonJS NPM package.</p>
+
+<pre class='language-javascript'><code>
+<script class='demo' type='module'>
+  import { prng_alea } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_xor128 } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_tychei } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_xorwow } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_xor4096 } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_xorshift7 } from './esm/index.mjs'; // from 'esm-seedrandom'
+  import { prng_arc4 } from './esm/index.mjs'; // from 'esm-seedrandom'
 
   let seed_str = 'an example seed string';
 
-  console.log('alea:')
-  console.table(gen_sample(prng_alea(seed_str)))
-
-  console.log('xor128:')
-  console.table(gen_sample(prng_xor128(seed_str)))
-
-  console.log('tychei:')
-  console.table(gen_sample(prng_tychei(seed_str)))
-
-  console.log('xorwow:')
-  console.table(gen_sample(prng_xorwow(seed_str)))
-
-  console.log('xor4096:')
-  console.table(gen_sample(prng_xor4096(seed_str)))
-
-  console.log('xorshift7:')
-  console.table(gen_sample(prng_xorshift7(seed_str)))
-
-  console.log('arc4:')
-  console.table(gen_sample(prng_arc4(seed_str)))
+  gen_sample('prng_alea', prng_alea(seed_str))
+  gen_sample('prng_xor128', prng_xor128(seed_str))
+  gen_sample('prng_tychei', prng_tychei(seed_str))
+  gen_sample('prng_xorwow', prng_xorwow(seed_str))
+  gen_sample('prng_xor4096', prng_xor4096(seed_str))
+  gen_sample('prng_xorshift7', prng_xorshift7(seed_str))
+  gen_sample('prng_arc4', prng_arc4(seed_str))
 
 
-  function gen_sample(myrng) {
-    return {
+  function gen_sample(rng_name, myrng) {
+    let sample = {
       prng: [myrng(), myrng(), myrng()],
       quick: [myrng.quick(), myrng.quick(), myrng.quick()],
       int32: [myrng.int32(), myrng.int32(), myrng.int32()],
       double: [myrng.double(), myrng.double(), myrng.double()],
-    };
+    }
+
+    console.log(`${rng_name}`)
+    console.table(sample)
+
+    let el = document.createElement('pre') 
+    el.textContent = JSON.stringify([rng_name, sample], null, 2)
+
+    document.getElementById('out').append(el)
   }
 
-</script>
+</script></code></pre>
+
+<output id='out'></output>
+
+</main>
+
+	<script crossorigin='anonymous' src='https://cdn.jsdelivr.net/npm/prismjs@1.20.0/components/prism-core.js'></script>
+	<script crossorigin='anonymous' src='https://cdn.jsdelivr.net/npm/prismjs@1.20.0/components/prism-clike.js'></script>
+	<script crossorigin='anonymous' src='https://cdn.jsdelivr.net/npm/prismjs@1.20.0/components/prism-javascript.js'></script>
 </body>
