@@ -2,15 +2,15 @@
 
 ## Fast PRNG Algorithms
 
-|PRNG name         | Period      | Author               |
-|------------------|-------------|----------------------|
-|[prng_alea][]     | ~2^116      | Baagøe               |
-|[prng_xor128][]   | 2^128-1     | Marsaglia            |
-|[prng_tychei][]   | ~2^127      | Neves/Araujo (ChaCha)|
-|[prng_xorwow][]   | 2^192-2^32  | Marsaglia            |
-|[prng_xor4096][]  | 2^4096-2^32 | Brent (xorgens)      |
-|[prng_xorshift7][]| 2^256-1     | Panneton/L'ecuyer    |
-|[prng_arc4][]     | ~2^1600     | Bau (ARC4)           |
+|PRNG name         | Period      | Author               | BigCrush test results |
+|------------------|-------------|----------------------|-----------------------|
+|[prng_alea][]     | ~2^116      | Baagøe               | pass all
+|[prng_xor128][]   | 2^128-1     | Marsaglia            | fail MatrixRank and LinearComp
+|[prng_tychei][]   | ~2^127      | Neves/Araujo (ChaCha)| pass all
+|[prng_xorwow][]   | 2^192-2^32  | Marsaglia            | fail CollisionOver, SimpPoker, and LinearComp
+|[prng_xor4096][]  | 2^4096-2^32 | Brent (xorgens)      | pass all
+|[prng_xorshift7][]| 2^256-1     | Panneton/L'ecuyer    | pass all
+|[prng_arc4][]     | ~2^1600     | Bau (ARC4)           | unknown
 
  [prng_alea]: ./alea.md
  [prng_xor128]: ./xor128.md
@@ -40,7 +40,7 @@ let prng = prng_algorithm('your own seed string', {state: state})
 
 `prng.quick()` returns a pseudo random number between 0.0 and 1.0 with enough bits for a 32-bit floating point.
 
-`prng.double()` returns a pseudo random number between 0.0 and 1.0 with enough bits for a 64-bit floating point.
+`prng.double()` returns a pseudo random number between 0.0 and 1.0 with enough bits for a 56-bit floating point.
 
 `prng()` is an alias for `prng.quick()` for most algorithms.
 The ARC4 algorithm aliases `prng()` to `prng.double()`.

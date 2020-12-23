@@ -13,6 +13,49 @@ Unit tested for number generator compatability with original [seedrandom][] Comm
 
 ## Use
 
+
+## Fast PRNG Algorithms
+
+|PRNG name         | Period      | Author               | BigCrush test results |
+|------------------|-------------|----------------------|-----------------------|
+|[prng_alea][]     | ~2^116      | Baagøe               | pass all
+|[prng_xor128][]   | 2^128-1     | Marsaglia            | fail MatrixRank and LinearComp
+|[prng_tychei][]   | ~2^127      | Neves/Araujo (ChaCha)| pass all
+|[prng_xorwow][]   | 2^192-2^32  | Marsaglia            | fail CollisionOver, SimpPoker, and LinearComp
+|[prng_xor4096][]  | 2^4096-2^32 | Brent (xorgens)      | pass all
+|[prng_xorshift7][]| 2^256-1     | Panneton/L'ecuyer    | pass all
+|[prng_arc4][]     | ~2^1600     | Bau (ARC4)           | unknown
+
+ [prng_alea]: ./docs/alea.md
+ [prng_xor128]: ./docs/xor128.md
+ [prng_tychei]: ./docs/tychei.md
+ [prng_xorwow]: ./docs/xorwow.md
+ [prng_xor4096]: ./docs/xor4096.md
+ [prng_xorshift7]: ./docs/xorshift7.md
+ [prng_arc4]: ./docs/arc4.md
+
+
+To use Johannes Baagøe's extremely fast Alea PRNG:
+
+
+```javascript
+// Use alea for Johannes Baagøe's clever and fast floating-point RNG.
+import {prng_alea} from 'esm-seedrandom';
+let myrng = prng_alea('hello.');
+
+// By default provides 32 bits of randomness in a float.
+console.log(myrng());               // Always 0.4783254903741181 for this seed and sequence
+console.log(myrng.quick());         // Always 0.8297006865032017 for this seed and sequence
+
+// Use "double" to get 56 bits of randomness.
+console.log(myrng.double());        // Always 0.4692433053279662 for this seed and sequence
+
+// Use "int32" to get a 32 bit (signed) integer.
+console.log(myrng.int32());         // Always 1350551666 for this seed and sequence
+```
+
+or direclty from HTML,
+
 ```html
 <script type="module">
   import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.mjs'
@@ -36,47 +79,6 @@ Unit tested for number generator compatability with original [seedrandom][] Comm
 </script>
 ```
 
-
-## Fast PRNG Algorithms
-
-The package includes several fast PRNGs.
-
-|PRNG name         | Period      | Author               |
-|------------------|-------------|----------------------|
-|[prng_alea][]     | ~2^116      | Baagøe               |
-|[prng_xor128][]   | 2^128-1     | Marsaglia            |
-|[prng_tychei][]   | ~2^127      | Neves/Araujo (ChaCha)|
-|[prng_xorwow][]   | 2^192-2^32  | Marsaglia            |
-|[prng_xor4096][]  | 2^4096-2^32 | Brent (xorgens)      |
-|[prng_xorshift7][]| 2^256-1     | Panneton/L'ecuyer    |
-|[prng_arc4][]     | ~2^1600     | Bau (ARC4)           |
-
- [prng_alea]: ./docs/alea.md
- [prng_xor128]: ./docs/xor128.md
- [prng_tychei]: ./docs/tychei.md
- [prng_xorwow]: ./docs/xorwow.md
- [prng_xor4096]: ./docs/xor4096.md
- [prng_xorshift7]: ./docs/xorshift7.md
- [prng_arc4]: ./docs/arc4.md
-
-
-To use Johannes Baagøe's extremely fast Alea PRNG:
-
-
-```javascript
-// Use alea for Johannes Baagøe's clever and fast floating-point RNG.
-import {prng_alea} from 'esm-seedrandom';
-let arng = prng_alea('hello.');
-
-// By default provides 32 bits of randomness in a float.
-console.log(arng());               // Always 0.4783254903741181
-
-// Use "double" to get 56 bits of randomness.
-console.log(arng.double());        // Always 0.8297006866124559
-
-// Use "int32" to get a 32 bit (signed) integer.
-console.log(arng.int32());         // Always 1076136327
-```
 
 ## Docs
 
@@ -128,7 +130,7 @@ for (let j = 0; j < 1e5; ++j)
 ```
 
 In normal use the prng is opaque and its internal state cannot be accessed.
-However, if the "state" option is specified, the prng gets a state() method
+However, if the `state` option is provided, the prng gets a state() method
 that returns a plain object the can be used to reconstruct a prng later in
 the same state (by passing that saved object back as the state option).
 
