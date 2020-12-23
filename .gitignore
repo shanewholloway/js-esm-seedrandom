@@ -6,3 +6,4 @@ bower_components
 /esm
 /cjs
 /umd
+mocha_unittest.cjs.js

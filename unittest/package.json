@@ -12,12 +12,12 @@
   },
   "scripts": {
     "prebuild": "test -d ./node_modules || npm -s install",
-    "clean": "rm -rf ./__*.*",
+    "clean": "rm ./mocha_unittest.cjs.js browser_unittest.iife.js",
     "build": "rollup --config",
     "watch": "npm -s run build -- --watch",
     "pretest": "npm -s run build",
     "test": "npm -s run test:one",
-    "test:one": "mocha ./__unittest.cjs.js",
-    "test:min": "mocha --reporter=min ./__unittest.cjs.js"
+    "test:one": "mocha ./mocha_unittest.cjs.js",
+    "test:min": "mocha --reporter=min ./mocha_unittest.cjs.js"
   }
 }
