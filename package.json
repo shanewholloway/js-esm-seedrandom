@@ -19,6 +19,9 @@
   "bugs": {
     "url": "https://github.com/shanewholloway/js-esm-seedrandom/issues"
   },
+  "files": [
+    "esm"
+  ],
   "type": "module",
   "module": "./esm/index.mjs",
   "main": "./esm/index.mjs",
