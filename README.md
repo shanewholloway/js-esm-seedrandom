@@ -14,7 +14,7 @@ Unit tested for number generator compatability with original [seedrandom][] Comm
 
 ## Demo
 
-GitHub Pages-based [Live demo](https://shanewholloway.github.io/js-esm-seedrandom/index.html)
+[Live demo](https://shanewholloway.github.io/js-esm-seedrandom/index.html)
 
 
 ## Use
@@ -63,7 +63,7 @@ or direclty from HTML,
 
 ```html
 <script type="module">
-  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.mjs'
+  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.js'
 
   let myrng = prng_alea('an example seed string')
 
@@ -102,17 +102,17 @@ or in HTML,
 
 ```html
 <script type='module'>
-  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
+  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
 
   // or use the individual algorithms by module
 
-  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.mjs'
-  import {prng_xor128} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor128.min.mjs'
-  import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/tychei.min.mjs'
-  import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorwow.min.mjs'
-  import {prng_xor4096} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor4096.min.mjs'
-  import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorshift7.min.mjs'
-  import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/arc4.min.mjs'
+  import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.js'
+  import {prng_xor128} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor128.min.js'
+  import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/tychei.min.js'
+  import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorwow.min.js'
+  import {prng_xor4096} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xor4096.min.js'
+  import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorshift7.min.js'
+  import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/arc4.min.js'
 </script>
 ```
 
@@ -150,6 +150,7 @@ In NodeJS [unittests][gh-actions-unittests], validation of state snapshot compat
  [gh-actions-unittests]: https://github.com/shanewholloway/js-esm-seedrandom/actions?query=workflow%3A%22Node.js+CI%22
 
 
-## LICENSE (MIT)
+## License (MIT)
 
-[MIT LICENSE](./LICENSE)
+[MIT](./LICENSE)
+

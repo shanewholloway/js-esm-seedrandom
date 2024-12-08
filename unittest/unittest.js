@@ -1,0 +1,7 @@
+import './unit/alea.js'
+import './unit/xor128.js'
+import './unit/tychei.js'
+import './unit/xorwow.js'
+import './unit/xor4096.js'
+import './unit/xorshift7.js'
+import './unit/arc4.js'

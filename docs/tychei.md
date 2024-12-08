@@ -11,12 +11,12 @@ number generator derived from ChaCha, a modern stream cipher.
 
 ```javascript
 import {prng_tychei} from 'esm-seedrandom'
-import {prng_tychei} from 'esm-seedrandom/esm/tychei.mjs'
-import prng_tychei from 'esm-seedrandom/esm/tychei.mjs'
+import {prng_tychei} from 'esm-seedrandom/esm/tychei.js'
+import prng_tychei from 'esm-seedrandom/esm/tychei.js'
 
 // from a browser or deno environment
-import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
-import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/tychei.min.mjs'
+import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
+import {prng_tychei} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/tychei.min.js'
 
 
 let myrng = prng_tychei('an example seed string', {state: true})

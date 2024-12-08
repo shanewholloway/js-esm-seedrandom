@@ -7,12 +7,12 @@ alea, a 53-bit multiply-with-carry generator by Johannes Baagøe.
 
 ```javascript
 import {prng_alea} from 'esm-seedrandom'
-import {prng_alea} from 'esm-seedrandom/esm/alea.mjs'
-import prng_alea from 'esm-seedrandom/esm/alea.mjs'
+import {prng_alea} from 'esm-seedrandom/esm/alea.js'
+import prng_alea from 'esm-seedrandom/esm/alea.js'
 
 // from a browser or deno environment
-import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
-import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.mjs'
+import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
+import {prng_alea} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/alea.min.js'
 
 
 let myrng = prng_alea('an example seed string', {state: true})

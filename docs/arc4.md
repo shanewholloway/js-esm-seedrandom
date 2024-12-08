@@ -8,12 +8,12 @@ The original ARC4-based prng included in the [seedrandom][] library.
 
 ```javascript
 import {prng_arc4} from 'esm-seedrandom'
-import {prng_arc4} from 'esm-seedrandom/esm/arc4.mjs'
-import prng_arc4 from 'esm-seedrandom/esm/arc4.mjs'
+import {prng_arc4} from 'esm-seedrandom/esm/arc4.js'
+import prng_arc4 from 'esm-seedrandom/esm/arc4.js'
 
 // from a browser or deno environment
-import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
-import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/arc4.min.mjs'
+import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
+import {prng_arc4} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/arc4.min.js'
 
 
 let myrng = prng_arc4('an example seed string', {state: true})

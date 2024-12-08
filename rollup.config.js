@@ -1,28 +1,32 @@
-import { terser as rpi_terser } from 'rollup-plugin-terser'
-
-
-const _cfg_ = { plugins: [] }
-const _cfg_min_ = { ... _cfg_,
-  plugins: [ ... _cfg_.plugins, rpi_terser() ]}
+import rpi_terser from '@rollup/plugin-terser'
 
 export default [
-  ... add_mjs('index'),
+  ... add('index'),
 
-  ... add_mjs('alea'),
-  ... add_mjs('tychei'),
-  ... add_mjs('xor128'),
-  ... add_mjs('xor4096'),
-  ... add_mjs('xorshift7'),
-  ... add_mjs('xorwow'),
-  ... add_mjs('arc4'),
+  ... add('alea'),
+  ... add('tychei'),
+  ... add('xor128'),
+  ... add('xor4096'),
+  ... add('xorshift7'),
+  ... add('xorwow'),
+  ... add('arc4'),
 ]
 
-function add_mjs(source, dest=source) {
+function add(source, dest=source) {
   return [
-    { ..._cfg_, input: `lib/${source}.mjs`,
-      output: { file: `esm/${dest}.mjs`, format: 'es', sourcemap: true }},
+    { input: `lib/${source}.js`,
+      output: [
+        { file: `esm/${dest}.js`, format: 'es', sourcemap: true },
+        { file: `esm/${dest}.mjs`, format: 'es', sourcemap: true },
+      ],
+    },
 
-    { ... _cfg_min_, input: `lib/${source}.mjs`,
-      output: { file: `esm/${dest}.min.mjs`, format: 'es', sourcemap: false }},
+    { input: `lib/${source}.js`,
+      plugins: [ rpi_terser() ],
+      output: [
+        { file: `esm/${dest}.min.js`, format: 'es', sourcemap: false },
+        { file: `esm/${dest}.min.mjs`, format: 'es', sourcemap: false },
+      ],
+    },
   ]
 }

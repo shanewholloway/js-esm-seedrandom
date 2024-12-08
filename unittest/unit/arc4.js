@@ -1,9 +1,9 @@
 import * as assert from 'uvu/assert'
-import {test_prng_alg} from './_common.mjs'
+import {test_prng_alg} from './_common.js'
 
 import { prng_arc4 } from 'esm-seedrandom'
-import { prng_arc4 as prng_arc4_isolated } from 'esm-seedrandom/esm/arc4.mjs'
-import { prng_arc4 as prng_arc4_minify } from 'esm-seedrandom/esm/arc4.min.mjs'
+import { prng_arc4 as prng_arc4_isolated } from 'esm-seedrandom/esm/arc4.js'
+import { prng_arc4 as prng_arc4_minify } from 'esm-seedrandom/esm/arc4.min.js'
 
 const cjs_prng_arc4 = require('seedrandom')
 

@@ -7,12 +7,12 @@ xorwow, George Marsaglia's 160-bit xor-shift combined plus weyl.
 
 ```javascript
 import {prng_xorwow} from 'esm-seedrandom'
-import {prng_xorwow} from 'esm-seedrandom/esm/xorwow.mjs'
-import prng_xorwow from 'esm-seedrandom/esm/xorwow.mjs'
+import {prng_xorwow} from 'esm-seedrandom/esm/xorwow.js'
+import prng_xorwow from 'esm-seedrandom/esm/xorwow.js'
 
 // from a browser or deno environment
-import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
-import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorwow.min.mjs'
+import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
+import {prng_xorwow} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorwow.min.js'
 
 
 let myrng = prng_xorwow('an example seed string', {state: true})

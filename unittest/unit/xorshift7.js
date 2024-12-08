@@ -1,9 +1,9 @@
 import * as assert from 'uvu/assert'
-import {test_prng_alg} from './_common.mjs'
+import {test_prng_alg} from './_common.js'
 
 import { prng_xorshift7 } from 'esm-seedrandom'
-import { prng_xorshift7 as prng_xorshift7_isolated } from 'esm-seedrandom/esm/xorshift7.mjs'
-import { prng_xorshift7 as prng_xorshift7_minify } from 'esm-seedrandom/esm/xorshift7.min.mjs'
+import { prng_xorshift7 as prng_xorshift7_isolated } from 'esm-seedrandom/esm/xorshift7.js'
+import { prng_xorshift7 as prng_xorshift7_minify } from 'esm-seedrandom/esm/xorshift7.min.js'
 
 const cjs_prng_xorshift7 = require('seedrandom/lib/xorshift7.js')
 

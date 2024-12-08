@@ -10,12 +10,12 @@ with 256 bits, that passes BigCrush with no systmatic failures.
 
 ```javascript
 import {prng_xorshift7} from 'esm-seedrandom'
-import {prng_xorshift7} from 'esm-seedrandom/esm/xorshift7.mjs'
-import prng_xorshift7 from 'esm-seedrandom/esm/xorshift7.mjs'
+import {prng_xorshift7} from 'esm-seedrandom/esm/xorshift7.js'
+import prng_xorshift7 from 'esm-seedrandom/esm/xorshift7.js'
 
 // from a browser or deno environment
-import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.mjs'
-import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorshift7.min.mjs'
+import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/index.min.js'
+import {prng_xorshift7} from '//cdn.jsdelivr.net/npm/esm-seedrandom/esm/xorshift7.min.js'
 
 
 let myrng = prng_xorshift7('an example seed string', {state: true})

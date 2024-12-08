@@ -1,9 +1,9 @@
 import * as assert from 'uvu/assert'
-import {test_prng_alg} from './_common.mjs'
+import {test_prng_alg} from './_common.js'
 
 import { prng_xor128 } from 'esm-seedrandom'
-import { prng_xor128 as prng_xor128_isolated } from 'esm-seedrandom/esm/xor128.mjs'
-import { prng_xor128 as prng_xor128_minify } from 'esm-seedrandom/esm/xor128.min.mjs'
+import { prng_xor128 as prng_xor128_isolated } from 'esm-seedrandom/esm/xor128.js'
+import { prng_xor128 as prng_xor128_minify } from 'esm-seedrandom/esm/xor128.min.js'
 
 const cjs_prng_xor128 = require('seedrandom/lib/xor128.js')
 

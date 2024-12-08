@@ -1,9 +1,9 @@
 import * as assert from 'uvu/assert'
-import {test_prng_alg} from './_common.mjs'
+import {test_prng_alg} from './_common.js'
 
 import { prng_alea } from 'esm-seedrandom'
-import { prng_alea as prng_alea_isolated } from 'esm-seedrandom/esm/alea.mjs'
-import { prng_alea as prng_alea_minify } from 'esm-seedrandom/esm/alea.min.mjs'
+import { prng_alea as prng_alea_isolated } from 'esm-seedrandom/esm/alea.js'
+import { prng_alea as prng_alea_minify } from 'esm-seedrandom/esm/alea.min.js'
 
 const cjs_prng_alea = require('seedrandom/lib/alea.js')
 

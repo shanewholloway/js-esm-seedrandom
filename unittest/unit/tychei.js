@@ -1,9 +1,9 @@
 import * as assert from 'uvu/assert'
-import {test_prng_alg} from './_common.mjs'
+import {test_prng_alg} from './_common.js'
 
 import { prng_tychei } from 'esm-seedrandom'
-import { prng_tychei as prng_tychei_isolated } from 'esm-seedrandom/esm/tychei.mjs'
-import { prng_tychei as prng_tychei_minify } from 'esm-seedrandom/esm/tychei.min.mjs'
+import { prng_tychei as prng_tychei_isolated } from 'esm-seedrandom/esm/tychei.js'
+import { prng_tychei as prng_tychei_minify } from 'esm-seedrandom/esm/tychei.min.js'
 
 const cjs_prng_tychei = require('seedrandom/lib/tychei.js')
 
