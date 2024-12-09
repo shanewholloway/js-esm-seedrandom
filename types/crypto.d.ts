@@ -1,1 +1,7 @@
-export function randomBytes(width: any): Uint8Array<any>;
+/**
+ * Description placeholder
+ *
+ * @param {number} width
+ * @returns {Uint8Array}
+ */
+export function randomBytes(width: number): Uint8Array;
