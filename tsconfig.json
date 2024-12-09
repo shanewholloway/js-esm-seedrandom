@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "noImplicitAny": false,
+    "outDir": "./types/",
+    "rootDir": "./lib/",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "types": [
+      "mocha"
+    ]
+  },
+  "exclude": [
+    "unittest/*"
+  ],
+  "include": [
+    "lib/*.js"
+  ]
+}
