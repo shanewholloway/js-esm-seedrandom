@@ -32,8 +32,10 @@
   ],
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/mocha": "^10.0.10",
     "qsrv": "^0.2.8",
-    "rollup": "^2.79.2"
+    "rollup": "^2.79.2",
+    "typescript": "^5.7.2"
   },
   "scripts": {
     "clean": "rm -rf ./cjs/* ./esm/* ./umd/*",
